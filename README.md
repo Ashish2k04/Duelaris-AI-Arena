@@ -1,2 +1,1 @@
-# Duelaris-AI-Arena
-A LangGraph powered AI arena where two AI agents independently solve a problem and a third AI judge evaluates both solutions to deliver a final recommendation.
+🚧 Under Development | A LangGraph powered AI arena where two AI agents independently solve a problem and a third AI judge evaluates both solutions to deliver a final recommendation.
