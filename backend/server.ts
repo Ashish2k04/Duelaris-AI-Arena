@@ -1,5 +1,11 @@
+import "dotenv/config";
 import app from "./src/app.js";
+import {aiAsk} from './src/services/models.service.js';
 
-app.listen(3000, ()=>{
-    console.log(`Server is running on port 3000`);
+const PORT = process.env.PORT || 8000
+
+app.listen(PORT, ()=>{
+    console.log(`Server is running on port ${PORT}`);
 })
+
+aiAsk("Who is the PM of india?")
