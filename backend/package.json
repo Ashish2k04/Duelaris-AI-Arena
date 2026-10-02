@@ -17,6 +17,8 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "@langchain/core": "^1.2.14",
+    "@langchain/google": "^0.2.9",
     "express": "^5.2.1"
   }
 }
