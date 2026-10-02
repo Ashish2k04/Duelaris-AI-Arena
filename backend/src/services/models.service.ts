@@ -7,7 +7,6 @@ const COHERE = new ChatCohere({
     model: "north-small-translate-09-2026",
     temperature: 0,
     maxRetries: 2,
-    // other params...
 })
 
 const GEMINI = new ChatGoogle("gemini-3.5-flash");
