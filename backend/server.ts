@@ -8,4 +8,4 @@ app.listen(PORT, ()=>{
     console.log(`Server is running on port ${PORT}`);
 })
 
-aiAsk("Who is the PM of india?")
+aiAsk("Education minister of india?")
