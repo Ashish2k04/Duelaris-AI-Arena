@@ -16,7 +16,7 @@ export const geminiModel = new ChatGoogle({
     apiKey: configs.GOOGLE_API_KEY
 });
 
-const groqModel = new ChatGroq({
+export const groqModel = new ChatGroq({
     model: "openai/gpt-oss-120b",
     maxRetries: 2,
     apiKey: configs.GROQ_API_KEY
