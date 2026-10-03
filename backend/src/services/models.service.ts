@@ -4,7 +4,7 @@ import { ChatCohere } from "@langchain/cohere";
 import { ChatGroq } from "@langchain/groq";
 import { configs } from "../config/config.js";
 
-const cohereModel = new ChatCohere({
+export const cohereModel = new ChatCohere({
     model: "command-a-plus-05-2026",
     maxRetries: 2,
     apiKey: configs.COHERE_API_KEY
