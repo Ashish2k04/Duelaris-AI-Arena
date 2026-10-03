@@ -1,2 +1,2 @@
-import { StateSchema, MessagesValue, type GraphNode, StateGraph, START, END } from "@langchain/langgraph";
+import { StateSchema, MessagesValue, StateGraph, START, END } from "@langchain/langgraph";
 
