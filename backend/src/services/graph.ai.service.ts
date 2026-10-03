@@ -10,5 +10,5 @@ type AIBATTELSTATE = {
     messages: typeof MessagesValue;
     solution_1: string;
     solution_2: string;
-    judgement: ;
+    judgement: JUDGEMENT;
 }
