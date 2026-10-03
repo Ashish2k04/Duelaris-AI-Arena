@@ -10,7 +10,7 @@ export const cohereModel = new ChatCohere({
     apiKey: configs.COHERE_API_KEY
 })
 
-const geminiModel = new ChatGoogle({
+export const geminiModel = new ChatGoogle({
     model: "gemini-3.6-flash",
     maxRetries: 2,
     apiKey: configs.GOOGLE_API_KEY
