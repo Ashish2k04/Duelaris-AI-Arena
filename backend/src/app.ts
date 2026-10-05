@@ -8,7 +8,7 @@ app.get('/health', (req,res)=>{
 })
 
 app.post("/test-graph", async (req,res)=>{
-    await useGraph("What is event loop in javascript?")
+    await useGraph("Difference between javascript and typescript?")
 })
 
 export default app;
