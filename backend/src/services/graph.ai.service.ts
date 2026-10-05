@@ -28,8 +28,8 @@ const State = new StateSchema({
 
 const solutionNode: GraphNode<typeof State> = async (state: typeof State) => {
        const [cohere_solution, groq_solution] = await Promise.all([
-        cohereModel.invoke(state.messages[0]),
-        groqModel.invoke(state.messages[0])
+        cohereModel.invoke(state.messages[0].text),
+        groqModel.invoke(state.messages[0].text)
        ])
 
        return {
