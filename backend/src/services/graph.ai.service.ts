@@ -24,4 +24,6 @@ export default async function (userMessage: string) {
             new HumanMessage(userMessage)
         ]
     })
+
+    return result.messages
 }       
