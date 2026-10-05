@@ -1,6 +1,7 @@
 import { HumanMessage } from "@langchain/core/messages";
 import { StateSchema, MessagesValue, ReducedValue, StateGraph, START, END } from "@langchain/langgraph";
 import type { GraphNode } from "@langchain/langgraph";
+import {geminiModel, cohereModel, groqModel} from "./models.service.js";
 import {z} from "zod";
 
 const State = new StateSchema({
@@ -25,16 +26,22 @@ const State = new StateSchema({
     })
 })
 
-const solutionNode: GraphNode<typeof State> = (state: typeof State) => {
-       console.log(state.messages)
+const solutionNode: GraphNode<typeof State> = async (state: typeof State) => {
+       const [cohere_solution, groq_solution] = await Promise.all([
+        cohereModel.invoke(state.messages[0]),
+        groqModel.invoke(state.messages[0])
+       ])
+
        return {
-        messages: state.messages[0]
+          solution_1: cohere_solution.text,
+          solution_2: groq_solution.text
        }
 }
 
 const graph = new StateGraph(State)
        .addNode("solution", solutionNode)
        .addEdge(START, "solution")
+       .addEdge("solution", END)
        .compile()
 
 export default async function (userMessage: string) {
@@ -44,5 +51,7 @@ export default async function (userMessage: string) {
         ]
     })
 
+    console.log(result);
+    
     return result.messages
 }       
