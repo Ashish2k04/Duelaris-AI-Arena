@@ -1,6 +1,5 @@
 import { HumanMessage } from "@langchain/core/messages";
-import { StateSchema, MessagesValue, ReducedValue, StateGraph, START, END } from "@langchain/langgraph";
-import type { GraphNode } from "@langchain/langgraph";
+import { StateSchema, MessagesValue, ReducedValue, type GraphNode , StateGraph, START, END } from "@langchain/langgraph";
 import {geminiModel, cohereModel, groqModel} from "./models.service.js";
 import {z} from "zod";
 
