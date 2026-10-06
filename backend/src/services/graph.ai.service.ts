@@ -61,12 +61,20 @@ const judgeNode: GraphNode<typeof State> = async (state: typeof State) => {
             )
         ]
       })
+
+      const result = judgeResponse.structuredResponse
+
+      return {
+        judge_recommendation: result
+      }
 }
 
 const graph = new StateGraph(State)
        .addNode("solution", solutionNode)
+       .addNode("judge", judgeNode)
        .addEdge(START, "solution")
-       .addEdge("solution", END)
+       .addEdge("solution", "judge")
+       .addEdge("judge", END)
        .compile()
 
 export default async function (userMessage: string) {
