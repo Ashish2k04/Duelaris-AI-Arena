@@ -1,5 +1,4 @@
 import "dotenv/config"
-import { ChatGoogle } from "@langchain/google";
 import { ChatCohere } from "@langchain/cohere";
 import { ChatGroq } from "@langchain/groq";
 import { configs } from "../config/config.js";
@@ -10,21 +9,16 @@ export const cohereModel = new ChatCohere({
     apiKey: configs.COHERE_API_KEY
 })
 
-export const geminiModel = new ChatGoogle({
-    model: "gemini-3.6-flash",
-    maxRetries: 2,
-    apiKey: configs.GOOGLE_API_KEY
-});
-
-export const groqModel = new ChatGroq({
+export const groqModel_1 = new ChatGroq({
     model: "openai/gpt-oss-120b",
     maxRetries: 2,
-    apiKey: configs.GROQ_API_KEY
+    apiKey: configs.GROQ_API_KEY_1
 });
 
-export async function aiAsk(PROMPT: string){
-   const res = await groqModel.invoke(PROMPT);
-   console.log(res.text)
-}
+export const groqModel_2 = new ChatGroq({
+    model: "openai/gpt-oss-120b",
+    maxRetries: 2,
+    apiKey: configs.GROQ_API_KEY_2
+});
 
 
