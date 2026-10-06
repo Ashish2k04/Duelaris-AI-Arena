@@ -38,6 +38,31 @@ const solutionNode: GraphNode<typeof State> = async (state: typeof State) => {
        }
 }
 
+const judgeNode: GraphNode<typeof State> = async (state: typeof State) => {
+      const {solution_1, solution_2} = state;
+
+      const judge = await createAgent({
+        model: geminiModel,
+        tools: [],
+        responseFormat: providerStrategy(z.object({
+            solution_1_score: z.number().min(0).max(10),
+            solution_2_score: z.number().min(0).max(10)
+        }))
+      })
+
+      const judgeResponse = await judge.invoke({
+        messages: [
+             new HumanMessage(
+                `You are a judge tasked with evaluating the quality of two solutions to a problem. 
+                The problem is: ${state.messages[0].text}. The first solution is: ${solution_1}. 
+                The second solution is: ${solution_2}. Please provide a score between 0 and 10 for each solution, 
+                where 0 means the solution is completely incorrect or irrelevant, and 10 means the solution is perfect 
+                and fully addresses the problem.`
+            )
+        ]
+      })
+}
+
 const graph = new StateGraph(State)
        .addNode("solution", solutionNode)
        .addEdge(START, "solution")
