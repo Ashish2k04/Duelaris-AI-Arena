@@ -8,7 +8,7 @@ app.get('/health', (req,res)=>{
 })
 
 app.post("/test-graph", async (req,res)=>{
-    await useGraph("Difference between javascript and typescript?")
+    await useGraph("Capital of india is ?")
 })
 
 export default app;
