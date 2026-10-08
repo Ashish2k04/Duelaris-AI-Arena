@@ -8,7 +8,7 @@ app.get('/health', (req,res)=>{
 })
 
 app.post("/test-graph", async (req,res)=>{
-    await useGraph("Name a programming language which is good for students who're learning ai.")
+    await useGraph("Write an code for factorial function in js.")
 })
 
 export default app;
