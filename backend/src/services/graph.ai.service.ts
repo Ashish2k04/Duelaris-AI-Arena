@@ -71,3 +71,12 @@ const judgeNode: GraphNode<typeof state> = async (state) => {
     }
 
 }
+
+const graph = new StateGraph(state)
+    .addNode("solution", solutionNode)
+    .addNode("judge_node", judgeNode)
+    .addEdge(START, "solution")
+    .addEdge("solution", "judge_node")
+    .addEdge("judge_node", END)
+    .compile()
+
