@@ -14,3 +14,17 @@ const state = new StateSchema({
         solution_2_reasoning: z.string().default(""),
     })
 })
+
+
+const solutionNode: GraphNode<typeof state> = async (state) => {
+
+    const [groqResponse, cohereResponse] = await Promise.all([
+        groqModel_1.invoke(state.problem),
+        cohereModel.invoke(state.problem)
+    ])
+
+    return {
+        solution_1: groqResponse.text,
+        solution_2: cohereResponse.text,
+    }
+}
