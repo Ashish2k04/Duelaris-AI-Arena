@@ -19,7 +19,7 @@ export const groqModel_1 = new ChatGroq({
 export const geminiModel = new ChatGoogleGenerativeAI({
     model: "gemini-3.5-flash-lite",
     maxRetries: 2,
-    apiKey: configs.GROQ_API_KEY_1
+    apiKey: configs.GEMINI_API_KEY
 });
 
 export const groqModel_2 = new ChatGroq({
