@@ -1,4 +1,5 @@
 import "dotenv/config"
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatCohere } from "@langchain/cohere";
 import { ChatGroq } from "@langchain/groq";
 import { configs } from "../config/config.js";
@@ -11,6 +12,12 @@ export const cohereModel = new ChatCohere({
 
 export const groqModel_1 = new ChatGroq({
     model: "openai/gpt-oss-120b",
+    maxRetries: 2,
+    apiKey: configs.GROQ_API_KEY_1
+});
+
+export const geminiModel = new ChatGoogleGenerativeAI({
+    model: "gemini-3.5-flash-lite",
     maxRetries: 2,
     apiKey: configs.GROQ_API_KEY_1
 });
