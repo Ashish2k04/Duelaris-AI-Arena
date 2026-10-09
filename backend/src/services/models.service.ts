@@ -10,10 +10,10 @@ export const cohereModel = new ChatCohere({
     apiKey: configs.COHERE_API_KEY
 })
 
-export const groqModel_1 = new ChatGroq({
+export const groqModel = new ChatGroq({
     model: "openai/gpt-oss-120b",
     maxRetries: 2,
-    apiKey: configs.GROQ_API_KEY_1
+    apiKey: configs.GROQ_API_KEY
 });
 
 export const geminiModel = new ChatGoogleGenerativeAI({
@@ -22,10 +22,5 @@ export const geminiModel = new ChatGoogleGenerativeAI({
     apiKey: configs.GEMINI_API_KEY
 });
 
-export const groqModel_2 = new ChatGroq({
-    model: "openai/gpt-oss-120b",
-    maxRetries: 2,
-    apiKey: configs.GROQ_API_KEY_2
-});
 
 
