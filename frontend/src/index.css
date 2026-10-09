@@ -1,0 +1,344 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #05050f;
+    --bg-secondary: #0d0d1f;
+    --bg-card: #0f0f24;
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --glow-cyan: #00d4ff;
+    --glow-purple: #a855f7;
+    --glow-gold: #f59e0b;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    font-family: 'Outfit', sans-serif;
+    color: #e2e8f0;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0d0d1f;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2d2d5e;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4a4a8a;
+  }
+}
+
+@layer components {
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Animated grid background */
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+  }
+
+  @keyframes gridMove {
+    0% { background-position: 0 0; }
+    100% { background-position: 50px 50px; }
+  }
+
+
+  /* Glassmorphism card base */
+  .glass-card {
+    background: rgba(15, 15, 36, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+  }
+
+  /* Cohere card glow */
+  .cohere-card {
+    background: linear-gradient(135deg, rgba(0, 130, 200, 0.08), rgba(0, 212, 255, 0.04));
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.06), inset 0 1px 0 rgba(0, 212, 255, 0.1);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .cohere-card:hover {
+    box-shadow: 0 0 60px rgba(0, 212, 255, 0.12), inset 0 1px 0 rgba(0, 212, 255, 0.15);
+    border-color: rgba(0, 212, 255, 0.35);
+  }
+
+  /* Groq card glow */
+  .groq-card {
+    background: linear-gradient(135deg, rgba(120, 40, 200, 0.08), rgba(168, 85, 247, 0.04));
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.06), inset 0 1px 0 rgba(168, 85, 247, 0.1);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .groq-card:hover {
+    box-shadow: 0 0 60px rgba(168, 85, 247, 0.12), inset 0 1px 0 rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.35);
+  }
+
+  /* Judge card glow */
+  .judge-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.03);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .judge-card:hover {
+    box-shadow: 0 0 60px rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Glow text */
+  .text-glow-cyan {
+    text-shadow: 0 0 20px rgba(0, 212, 255, 0.6), 0 0 40px rgba(0, 212, 255, 0.3);
+  }
+
+  .text-glow-purple {
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.6), 0 0 40px rgba(168, 85, 247, 0.3);
+  }
+
+  .text-glow-gold {
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.6), 0 0 40px rgba(245, 158, 11, 0.3);
+  }
+
+  /* Battle button */
+  .battle-btn {
+    background: linear-gradient(135deg, #00d4ff, #0080ff, #8b00ff);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+
+  .battle-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .battle-btn:hover::before {
+    opacity: 1;
+  }
+
+  .battle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4), 0 0 80px rgba(139, 0, 255, 0.2);
+  }
+
+  .battle-btn:active {
+    transform: translateY(0px);
+  }
+
+  .battle-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    animation: none;
+    background: linear-gradient(135deg, #3a6a8a, #3a3a6a);
+    transform: none;
+    box-shadow: none;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Score badge */
+  .score-badge {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    position: relative;
+  }
+
+  .score-badge::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--score-color, #00d4ff), transparent 60%);
+    animation: rotateBadge 3s linear infinite;
+    z-index: -1;
+  }
+
+  @keyframes rotateBadge {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* VS divider */
+  .vs-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .vs-text {
+    font-size: 1.4rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #00d4ff, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+    text-shadow: none;
+    filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+  }
+
+  /* Textarea */
+  .arena-textarea {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    color: #e2e8f0;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    resize: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+  }
+
+  .arena-textarea:focus {
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1), 0 0 30px rgba(0, 212, 255, 0.08);
+  }
+
+  .arena-textarea::placeholder {
+    color: rgba(148, 163, 184, 0.5);
+  }
+
+  /* Pulse animation for loading */
+  .pulse-dot {
+    animation: pulseDot 1.4s ease-in-out infinite;
+  }
+
+  .pulse-dot:nth-child(2) { animation-delay: 0.2s; }
+  .pulse-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes pulseDot {
+    0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+    40% { transform: scale(1.2); opacity: 1; }
+  }
+
+  /* Slide in animations */
+  .slide-up {
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .slide-up-delay-1 { animation-delay: 0.1s; opacity: 0; }
+  .slide-up-delay-2 { animation-delay: 0.25s; opacity: 0; }
+  .slide-up-delay-3 { animation-delay: 0.4s; opacity: 0; }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Winner crown */
+  .winner-badge {
+    background: #16a34a;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Progress bar for score */
+  .score-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+
+  .score-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Divider line */
+  .neon-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), rgba(168, 85, 247, 0.3), transparent);
+  }
+
+  /* Reasoning text */
+  .reasoning-text {
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 3px solid;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: rgba(226, 232, 240, 0.8);
+  }
+
+  /* Header gradient text */
+  .header-gradient {
+    background: linear-gradient(135deg, #00d4ff 0%, #ffffff 40%, #a855f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Shimmer loading effect */
+  .shimmer {
+    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+}
