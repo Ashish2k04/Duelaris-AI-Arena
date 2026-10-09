@@ -8,7 +8,9 @@ app.get('/health', (req,res)=>{
 })
 
 app.post("/test-graph", async (req,res)=>{
-    await useGraph("Write an code for factorial function in js.")
+    const result = await useGraph("Capital of india is ? and how many states are in india?")
+
+    res.json(result)
 })
 
 export default app;
