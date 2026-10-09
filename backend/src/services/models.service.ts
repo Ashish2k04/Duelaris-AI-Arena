@@ -4,6 +4,12 @@ import { ChatCohere } from "@langchain/cohere";
 import { ChatGroq } from "@langchain/groq";
 import { configs } from "../config/config.js";
 
+export const geminiModel = new ChatGoogleGenerativeAI({
+    model: "gemini-3.5-flash-lite",
+    maxRetries: 2,
+    apiKey: configs.GEMINI_API_KEY
+});
+
 export const cohereModel = new ChatCohere({
     model: "command-r7b-12-2024",
     maxRetries: 2,
@@ -16,11 +22,6 @@ export const groqModel = new ChatGroq({
     apiKey: configs.GROQ_API_KEY
 });
 
-export const geminiModel = new ChatGoogleGenerativeAI({
-    model: "gemini-3.5-flash-lite",
-    maxRetries: 2,
-    apiKey: configs.GEMINI_API_KEY
-});
 
 
 
