@@ -1,7 +1,7 @@
 import { StateGraph, StateSchema, START, END, type GraphNode} from "@langchain/langgraph"
 import z from "zod";
-import { groqModel_1, cohereModel, groqModel_2 } from "./models.service.js";
-import { createAgent, HumanMessage, providerStrategy } from "langchain";
+import { groqModel, cohereModel, geminiModel } from "./models.service.js";
+import { createAgent, HumanMessage, toolStrategy } from "langchain";
 
 const state = new StateSchema({
     problem: z.string().default(""),
@@ -19,7 +19,7 @@ const state = new StateSchema({
 const solutionNode: GraphNode<typeof state> = async (state) => {
 
     const [groqResponse, cohereResponse] = await Promise.all([
-        groqModel_1.invoke(state.problem),
+        groqModel.invoke(state.problem),
         cohereModel.invoke(state.problem)
     ])
 
@@ -33,8 +33,8 @@ const judgeNode: GraphNode<typeof state> = async (state) => {
     const { problem, solution_1, solution_2 } = state
 
     const judge = createAgent({
-        model: groqModel_2,
-        responseFormat: providerStrategy(z.object({
+        model: geminiModel,
+        responseFormat: toolStrategy(z.object({
             solution_1_score: z.number().min(0).max(10),
             solution_2_score: z.number().min(0).max(10),
             solution_1_reasoning: z.string(),
