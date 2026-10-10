@@ -1,36 +1,23 @@
 import { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/atom-one-dark.css';
 import { CrownIcon } from './Icons';
 
 /**
- * Renders markdown-style bold text (**text**) inline.
- */
-function renderMarkdown(text) {
-  if (!text) return '';
-  // Split by **...**
-  const parts = text.split(/\*\*(.*?)\*\*/g);
-  return parts.map((part, i) =>
-    i % 2 === 1
-      ? <strong key={i} className="font-semibold text-white">{part}</strong>
-      : <span key={i}>{part}</span>
-  );
-}
-
-/**
- * Formats response text preserving line breaks.
+ * Formats response text using ReactMarkdown.
  */
 function ResponseText({ text }) {
   if (!text) return null;
-  const lines = text.split('\n');
   return (
-    <div className="space-y-1.5 text-sm leading-relaxed text-slate-300">
-      {lines.map((line, i) => (
-        line.trim() === ''
-          ? <div key={i} className="h-2" />
-          : <p key={i}>{renderMarkdown(line)}</p>
-      ))}
+    <div className="text-sm leading-relaxed text-slate-300 markdown-content overflow-x-auto">
+      <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+        {text}
+      </ReactMarkdown>
     </div>
   );
 }
+
 
 /**
  * Animated score display
