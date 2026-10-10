@@ -1,3 +1,6 @@
+import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/atom-one-dark.css';
 import { GavelIcon } from './Icons';
 
 function ScoreBar({ label, score, color, isWinner }) {
@@ -155,8 +158,10 @@ export default function JudgeCard({ judge, animDelay = 0 }) {
             <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: m1Color }} />
             Model 1 Reasoning
           </h4>
-          <div className="reasoning-text" style={{ borderLeftColor: m1Color }}>
-            {solution_1_reasoning}
+          <div className="reasoning-text markdown-content overflow-x-auto" style={{ borderLeftColor: m1Color }}>
+            <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+              {solution_1_reasoning}
+            </ReactMarkdown>
           </div>
         </div>
 
@@ -166,8 +171,10 @@ export default function JudgeCard({ judge, animDelay = 0 }) {
             <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: m2Color }} />
             Model 2 Reasoning
           </h4>
-          <div className="reasoning-text" style={{ borderLeftColor: m2Color }}>
-            {solution_2_reasoning}
+          <div className="reasoning-text markdown-content overflow-x-auto" style={{ borderLeftColor: m2Color }}>
+            <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+              {solution_2_reasoning}
+            </ReactMarkdown>
           </div>
         </div>
       </div>
