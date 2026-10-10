@@ -21,7 +21,7 @@ export default function Header() {
         </div>
 
         {/* Right badge */}
-        <div className="flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.07]">
             <span className="text-xs font-semibold text-slate-300">AI Model 1</span>
             <span className="text-slate-600 text-xs">×</span>
