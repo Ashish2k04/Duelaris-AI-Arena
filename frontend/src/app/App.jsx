@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Header from '../components/Header';
 import QuestionInput from '../components/QuestionInput';
 import BattleResults from '../components/BattleResults';
@@ -24,6 +24,16 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState('');
+
+  const resultsRef = useRef(null);
+
+  useEffect(() => {
+    if (battleData && resultsRef.current) {
+      setTimeout(() => {
+        resultsRef.current.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [battleData]);
 
   const handleBattle = async (question) => {
     setIsLoading(true);
@@ -83,11 +93,13 @@ export default function App() {
           )}
 
           {/* Battle results */}
-          <BattleResults
-            data={battleData}
-            isLoading={isLoading}
-            question={currentQuestion}
-          />
+          <div ref={resultsRef}>
+            <BattleResults
+              data={battleData}
+              isLoading={isLoading}
+              question={currentQuestion}
+            />
+          </div>
 
           {/* Empty state (before first battle) */}
           {!isLoading && !battleData && !error && (
