@@ -88,7 +88,7 @@ export default function QuestionInput({ onBattle, isLoading }) {
 
       {/* Example questions */}
       <div className="mt-5 flex flex-wrap items-center gap-2 justify-center">
-        <span className="text-xs text-slate-600 font-medium">Try:</span>
+        <span className="hidden sm:inline-block text-xs text-slate-600 font-medium">Try:</span>
         {exampleQuestions.map((q, i) => (
           <button
             key={i}
