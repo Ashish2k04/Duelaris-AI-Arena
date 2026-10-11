@@ -4,7 +4,8 @@ import Header from '../components/Header';
 import QuestionInput from '../components/QuestionInput';
 import BattleResults from '../components/BattleResults';
 
-const BACKEND_URL = 'http://localhost:3000/invoke';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+const BACKEND_URL = `${API_BASE_URL.replace(/\/+$/, '')}/invoke`;
 
 export default function App() {
   const [battleData, setBattleData] = useState(null);
