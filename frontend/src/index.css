@@ -390,4 +390,61 @@
     margin-top: 1.25em;
     margin-bottom: 0.5em;
   }
+
+  /* Dedicated visible & styled scrollbars for model response cards */
+  .model-card-scroll {
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    padding-right: 14px;
+  }
+
+  .model-card-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .model-card-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 9999px;
+    margin: 8px 0;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  /* Model 1 (Cyan) Scrollbar */
+  .scroll-cyan {
+    scrollbar-width: thin;
+    scrollbar-color: #00d4ff rgba(255, 255, 255, 0.06);
+  }
+
+  .scroll-cyan::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #00d4ff 0%, #0284c7 100%);
+    border-radius: 9999px;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+    border: 1px solid rgba(0, 212, 255, 0.4);
+    cursor: pointer;
+  }
+
+  .scroll-cyan::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #38e1ff 0%, #0369a1 100%);
+    box-shadow: 0 0 16px rgba(0, 212, 255, 0.9);
+  }
+
+  /* Model 2 (Purple) Scrollbar */
+  .scroll-purple {
+    scrollbar-width: thin;
+    scrollbar-color: #a855f7 rgba(255, 255, 255, 0.06);
+  }
+
+  .scroll-purple::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%);
+    border-radius: 9999px;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    cursor: pointer;
+  }
+
+  .scroll-purple::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #d8b4fe 0%, #7e22ce 100%);
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.9);
+  }
 }
+
