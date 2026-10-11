@@ -306,6 +306,3 @@ The frontend shows the two model responses side by side, their scores and the ju
 - Let users inspect model names and choose models from the UI.
 - Add history for previous battles.
 
-## License
-
-No license is currently specified in this repository. Add a license file if you want to define how others may use, modify, and distribute this project.
