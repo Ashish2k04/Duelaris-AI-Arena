@@ -1,5 +1,7 @@
 # Duelaris AI Arena
 
+🚀 **Live Demo:** https://duelaris-ai-arena.vercel.app/
+
 Duelaris AI Arena is a full-stack AI comparison app where two AI models independently answer the same prompt and a third AI model judges both answers, scores them, explains its evaluation, and identifies the winner.
 
 ## Features
@@ -306,3 +308,6 @@ The frontend shows the two model responses side by side, their scores and the ju
 - Let users inspect model names and choose models from the UI.
 - Add history for previous battles.
 
+## License
+
+No license is currently specified in this repository. Add a license file if you want to define how others may use, modify, and distribute this project.
