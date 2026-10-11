@@ -63,16 +63,18 @@ function ScoreDisplay({ score, color, label }) {
  * Single model response card
  */
 export function ModelCard({ title, modelLabel, icon: Icon, response, score, reasoning, colorClass, accentColor, scoreLabel, isWinner, animDelay = 0 }) {
+  const scrollClass = colorClass === 'cohere-card' ? 'scroll-cyan' : 'scroll-purple';
+
   return (
     <div
-      className={`glass-card ${colorClass} rounded-2xl overflow-hidden slide-up`}
+      className={`glass-card ${colorClass} rounded-2xl overflow-hidden slide-up flex flex-col h-[520px] md:h-[580px]`}
       style={{ animationDelay: `${animDelay}s`, opacity: 0 }}
     >
       {/* Card header */}
-      <div className="px-5 py-4 flex items-center justify-between border-b border-white/[0.05]">
+      <div className="px-5 py-4 flex items-center justify-between border-b border-white/[0.05] flex-shrink-0">
         <div className="flex items-center gap-2.5">
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center"
+            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
             style={{ background: `${accentColor}18`, border: `1px solid ${accentColor}30` }}
           >
             <Icon size={18} />
@@ -97,25 +99,25 @@ export function ModelCard({ title, modelLabel, icon: Icon, response, score, reas
         )}
       </div>
 
-      {/* Response body */}
-      <div className="px-5 py-4 min-h-[140px]">
+      {/* Scrollable Response body & reasoning */}
+      <div className={`px-5 py-4 flex-1 overflow-y-auto model-card-scroll ${scrollClass}`}>
         <ResponseText text={response} />
-      </div>
 
-      {/* Reasoning (if provided) */}
-      {reasoning && (
-        <div className="px-5 pb-5">
-          <div
-            className="reasoning-text"
-            style={{ borderLeftColor: `${accentColor}60` }}
-          >
-            <p className="text-xs font-semibold mb-1.5" style={{ color: accentColor }}>
-              AI Judge Reasoning
-            </p>
-            {reasoning}
+        {/* Reasoning (if provided) */}
+        {reasoning && (
+          <div className="mt-4 pt-1">
+            <div
+              className="reasoning-text"
+              style={{ borderLeftColor: `${accentColor}60` }}
+            >
+              <p className="text-xs font-semibold mb-1.5" style={{ color: accentColor }}>
+                AI Judge Reasoning
+              </p>
+              {reasoning}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
@@ -125,8 +127,8 @@ export function ModelCard({ title, modelLabel, icon: Icon, response, score, reas
  */
 export function ModelCardSkeleton({ colorClass }) {
   return (
-    <div className={`glass-card ${colorClass} rounded-2xl overflow-hidden`}>
-      <div className="px-5 py-4 border-b border-white/[0.05] flex items-center justify-between">
+    <div className={`glass-card ${colorClass} rounded-2xl overflow-hidden flex flex-col h-[520px] md:h-[580px]`}>
+      <div className="px-5 py-4 border-b border-white/[0.05] flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl shimmer" />
           <div className="space-y-2">
@@ -136,12 +138,15 @@ export function ModelCardSkeleton({ colorClass }) {
         </div>
         <div className="w-16 h-10 rounded shimmer" />
       </div>
-      <div className="px-5 py-4 space-y-2.5">
+      <div className="px-5 py-4 space-y-3 flex-1 overflow-hidden">
         <div className="w-full h-3 rounded shimmer" />
         <div className="w-5/6 h-3 rounded shimmer" />
         <div className="w-4/6 h-3 rounded shimmer" />
         <div className="w-full h-3 rounded shimmer" />
         <div className="w-3/4 h-3 rounded shimmer" />
+        <div className="w-full h-3 rounded shimmer" />
+        <div className="w-2/3 h-3 rounded shimmer" />
+        <div className="w-4/5 h-3 rounded shimmer" />
       </div>
     </div>
   );
