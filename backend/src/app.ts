@@ -2,15 +2,21 @@ import express from 'express';
 import useGraph from './services/graph.ai.service.js';
 
 const app = express();
+app.use(express.json())
 
-app.get('/health', (req,res)=>{
+app.get('/', (req,res)=>{
     res.status(200).json({status: "ok"})
 })
 
-app.post("/test-graph", async (req,res)=>{
-    const result = await useGraph("Capital of india is ? and how many states are in india?")
+app.post("/invoke", async (req,res)=>{
+    const {input} = req.body;
+    const result = await useGraph(input)
 
-    res.json(result)
+    return res.status(200).json({
+        message: "Graph executed successfully.",
+        status: true,
+        data: result
+    })
 })
 
 export default app;
