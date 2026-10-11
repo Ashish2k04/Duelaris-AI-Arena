@@ -1,23 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 import Header from '../components/Header';
 import QuestionInput from '../components/QuestionInput';
 import BattleResults from '../components/BattleResults';
 
-// ─── Mock data for demo / development ────────────────────────────────────────
-const MOCK_RESPONSE = {
-  problem: "Capital of india is ? and how many states are in india?",
-  solution_1: "**Capital of India:** New Delhi  \n\n**Number of states (as of 2026):** 28 states  \n\n*(India also has 8 Union territories, but the count of states is 28.)*",
-  solution_2: "The capital of India is New Delhi. It is the seat of the Government of India and is located in the northern part of the country.\n\nAs of 2023, India is composed of 28 states and 8 union territories. These states and territories vary in size, population, and culture, contributing to the rich diversity of the country.",
-  judge: {
-    solution_1_score: 10,
-    solution_2_score: 9,
-    solution_1_reasoning: "Solution 1 correctly identifies the capital as New Delhi and states that there are 28 states (and mentions 8 union territories). It accurately looks ahead or correctly notes the current count without getting stuck on an outdated year. Formatting is clean and concise.",
-    solution_2_reasoning: "Solution 2 correctly identifies the capital as New Delhi and gives the correct number of states and union territories (28 and 8). However, it specifies 'As of 2023', which is slightly outdated given the prompt's context, but the factual information is correct."
-  }
-};
-
-// ─── API base URL (update to your backend URL) ────────────────────────────────
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const BACKEND_URL = 'http://localhost:3000/invoke';
 
 export default function App() {
   const [battleData, setBattleData] = useState(null);
@@ -42,22 +29,18 @@ export default function App() {
     setCurrentQuestion(question);
 
     try {
-      // ── Uncomment this block when backend is ready ──
-      // const response = await fetch(`${API_URL}/battle`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ question }),
-      // });
-      // if (!response.ok) throw new Error(`Server error: ${response.status}`);
-      // const data = await response.json();
-      // setBattleData(data);
+      const response = await axios.post(BACKEND_URL, {
+        input: question,
+      });
 
-      // ── DEMO MODE: simulates a 2.5s API call with mock data ──
-      await new Promise(resolve => setTimeout(resolve, 2500));
-      setBattleData({ ...MOCK_RESPONSE, problem: question });
-
+      const responseData = response.data?.data || response.data;
+      setBattleData(responseData);
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      setError(
+        err.response?.data?.message ||
+        err.message ||
+        'Something went wrong while connecting to the backend. Please try again.'
+      );
     } finally {
       setIsLoading(false);
     }
