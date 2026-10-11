@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch server.ts"
+    "dev": "tsx watch server.ts",
+     "start": "tsx server.ts"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +14,6 @@
   "type": "module",
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
     "langchain": "^1.5.15",
-    "zod": "^4.6.5"
+    "zod": "^4.6.5",
+     "tsx": "^4.23.15"
   }
 }
