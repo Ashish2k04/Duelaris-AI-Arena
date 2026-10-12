@@ -3,6 +3,7 @@ import axios from 'axios';
 import Header from '../components/Header';
 import QuestionInput from '../components/QuestionInput';
 import BattleResults from '../components/BattleResults';
+import { ClockIcon } from '../components/Icons';
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 const BACKEND_URL = `${API_BASE_URL.replace(/\/+$/, '')}/invoke`;
@@ -11,6 +12,7 @@ export default function App() {
   const [battleData, setBattleData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [rateLimitSeconds, setRateLimitSeconds] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState('');
 
   const resultsRef = useRef(null);
@@ -23,7 +25,25 @@ export default function App() {
     }
   }, [battleData]);
 
+  // Handle countdown timer for rate limit cooldown
+  useEffect(() => {
+    if (rateLimitSeconds <= 0) return;
+
+    const timer = setInterval(() => {
+      setRateLimitSeconds((prev) => {
+        if (prev <= 1) {
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [rateLimitSeconds]);
+
   const handleBattle = async (question) => {
+    if (rateLimitSeconds > 0) return;
+
     setIsLoading(true);
     setError(null);
     setBattleData(null);
@@ -37,11 +57,50 @@ export default function App() {
       const responseData = response.data?.data || response.data;
       setBattleData(responseData);
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        err.message ||
-        'Something went wrong while connecting to the backend. Please try again.'
-      );
+      // Check for express-rate-limit 429 error
+      const isRateLimit =
+        err.response?.status === 429 ||
+        (typeof err.response?.data === 'string' &&
+          err.response.data.toLowerCase().includes('too many requests')) ||
+        (err.response?.data?.message &&
+          typeof err.response.data.message === 'string' &&
+          err.response.data.message.toLowerCase().includes('too many requests'));
+
+      if (isRateLimit) {
+        // Extract error message returned by backend rate limiter
+        const backendMsg =
+          typeof err.response?.data === 'string' && err.response.data.trim()
+            ? err.response.data
+            : err.response?.data?.message || 'Too many requests, please try again later.';
+
+        // Check Retry-After header if exposed, otherwise default to 60s (1 minute)
+        let retrySeconds = 60;
+        const retryHeader = err.response?.headers?.['retry-after'];
+        if (retryHeader) {
+          const parsed = parseInt(retryHeader, 10);
+          if (!isNaN(parsed) && parsed > 0) {
+            retrySeconds = parsed;
+          }
+        }
+
+        setRateLimitSeconds(retrySeconds);
+        setError({
+          isRateLimit: true,
+          message: backendMsg,
+        });
+      } else {
+        const message =
+          (typeof err.response?.data === 'string' && err.response.data.trim())
+            ? err.response.data
+            : err.response?.data?.message ||
+              err.message ||
+              'Something went wrong while connecting to the backend. Please try again.';
+
+        setError({
+          isRateLimit: false,
+          message,
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -58,21 +117,96 @@ export default function App() {
         <Header />
 
         <main>
-          <QuestionInput onBattle={handleBattle} isLoading={isLoading} />
+          <QuestionInput
+            onBattle={handleBattle}
+            isLoading={isLoading}
+            rateLimitSeconds={rateLimitSeconds}
+          />
 
           {/* Error state */}
           {error && (
             <div className="max-w-4xl mx-auto px-6 mb-8">
-              <div className="glass-card border border-red-500/20 rounded-2xl px-5 py-4 flex items-center gap-3 bg-red-500/5">
-                <div className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0" />
-                <p className="text-red-400 text-sm">{error}</p>
-                <button
-                  onClick={() => setError(null)}
-                  className="ml-auto text-red-400/60 hover:text-red-400 transition-colors text-lg leading-none"
+              {error.isRateLimit ? (
+                <div
+                  className={`glass-card border rounded-2xl p-5 transition-all duration-300 ${
+                    rateLimitSeconds > 0
+                      ? 'border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent'
+                      : 'border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent'
+                  }`}
                 >
-                  ×
-                </button>
-              </div>
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border ${
+                        rateLimitSeconds > 0
+                          ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)]'
+                          : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
+                      }`}
+                    >
+                      {rateLimitSeconds > 0 ? (
+                        <ClockIcon size={20} />
+                      ) : (
+                        <span className="text-lg">✓</span>
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 flex-wrap mb-1">
+                        <h4 className="text-white font-bold text-sm tracking-wide">
+                          {rateLimitSeconds > 0
+                            ? 'Too Many Requests (Rate Limit Reached)'
+                            : 'Cooldown Finished'}
+                        </h4>
+                        {rateLimitSeconds > 0 ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+                            Try again in {rateLimitSeconds}s
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            Ready to battle!
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-slate-300 text-sm leading-relaxed">
+                        {rateLimitSeconds > 0
+                          ? `${error.message || 'Too many requests, please try again later.'} You can only send a maximum of 3 requests per minute.`
+                          : 'Your rate limit cooldown has ended. Feel free to submit your question now!'}
+                      </p>
+
+                      {rateLimitSeconds > 0 && (
+                        <div className="w-full bg-white/[0.08] rounded-full h-1.5 overflow-hidden mt-3">
+                          <div
+                            className="h-full bg-gradient-to-r from-amber-500 to-rose-500 transition-all duration-1000 ease-linear rounded-full"
+                            style={{
+                              width: `${Math.min(100, Math.max(0, (rateLimitSeconds / 60) * 100))}%`,
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => setError(null)}
+                      className="text-slate-400 hover:text-white transition-colors text-lg leading-none p-1"
+                      title="Dismiss"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="glass-card border border-red-500/20 rounded-2xl px-5 py-4 flex items-center gap-3 bg-red-500/5">
+                  <div className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0" />
+                  <p className="text-red-400 text-sm">{error.message}</p>
+                  <button
+                    onClick={() => setError(null)}
+                    className="ml-auto text-red-400/60 hover:text-red-400 transition-colors text-lg leading-none"
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
