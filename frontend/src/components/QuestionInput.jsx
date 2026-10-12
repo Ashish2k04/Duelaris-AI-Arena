@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { LightningIcon, BattleIcon, LoadingDots } from './Icons';
+import { LightningIcon, BattleIcon, LoadingDots, ClockIcon } from './Icons';
 
-export default function QuestionInput({ onBattle, isLoading }) {
+export default function QuestionInput({ onBattle, isLoading, rateLimitSeconds = 0 }) {
   const [question, setQuestion] = useState('');
+
+  const isRateLimited = rateLimitSeconds > 0;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!question.trim() || isLoading) return;
+    if (!question.trim() || isLoading || isRateLimited) return;
     onBattle(question.trim());
   };
 
@@ -61,19 +63,41 @@ export default function QuestionInput({ onBattle, isLoading }) {
 
           {/* Bottom bar */}
           <div className="flex items-center justify-between px-3 py-2">
-            <span className="text-xs text-slate-600 font-mono">
-              {question.length}/2000
-            </span>
+            {isRateLimited ? (
+              <div className="flex items-center gap-2 text-amber-400 text-xs font-medium">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                </span>
+                <span>Rate limited: wait {rateLimitSeconds}s</span>
+                <span className="text-slate-600 font-mono hidden sm:inline">
+                  ({question.length}/2000)
+                </span>
+              </div>
+            ) : (
+              <span className="text-xs text-slate-600 font-mono">
+                {question.length}/2000
+              </span>
+            )}
             <button
               id="battle-btn"
               type="submit"
-              disabled={!question.trim() || isLoading}
-              className="battle-btn flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-white font-bold text-sm"
+              disabled={!question.trim() || isLoading || isRateLimited}
+              className={`battle-btn flex items-center gap-2.5 px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 ${
+                isRateLimited
+                  ? '!bg-amber-500/15 !border !border-amber-500/30 !text-amber-300 cursor-not-allowed shadow-none'
+                  : 'text-white'
+              }`}
             >
               {isLoading ? (
                 <>
                   <LoadingDots />
                   <span>Battling...</span>
+                </>
+              ) : isRateLimited ? (
+                <>
+                  <ClockIcon size={16} />
+                  <span>Wait {rateLimitSeconds}s</span>
                 </>
               ) : (
                 <>
