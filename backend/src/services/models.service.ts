@@ -11,7 +11,7 @@ export const geminiModel = new ChatGoogleGenerativeAI({
 });
 
 export const cohereModel = new ChatCohere({
-    model: "command-a-reasoning-08-2025",
+    model: "command-r7b-12-2024",
     maxRetries: 2,
     apiKey: configs.COHERE_API_KEY
 })
@@ -22,7 +22,6 @@ export const groqModel = new ChatGroq({
     apiKey: configs.GROQ_API_KEY
 });
 
-//command-r7b-12-2024
 
 
 
