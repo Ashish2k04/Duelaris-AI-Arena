@@ -12,6 +12,8 @@ Duelaris AI Arena is a full-stack AI comparison app where two AI models independ
 - 📊 Score each answer from 0 to 10
 - 🧠 Display the judge's reasoning for both answers
 - 🏆 Highlight the higher-scoring response or show a tie
+- 🛡️ Rate-limit AI requests to reduce repeated or excessive calls
+- ⏱️ Show a cooldown countdown when the rate limit is reached
 - ✍️ Render Markdown and syntax-highlight code in model responses
 - ⏳ Loading skeletons, animated scores, and error feedback
 - 💡 Example prompts to try quickly
@@ -29,6 +31,9 @@ Duelaris AI Arena is a full-stack AI comparison app where two AI models independ
                              │
                              ▼
                       Express Backend
+                             │
+                       Rate Limiter
+                    3 requests / minute
                              │
                              ▼
                        LangGraph Flow
@@ -77,6 +82,7 @@ The solution node invokes Groq and Cohere concurrently with `Promise.all()`. Lan
 - Groq integration (`@langchain/groq`)
 - Cohere integration (`@langchain/cohere`)
 - Google Gemini integration (`@langchain/google-genai`)
+- express-rate-limit
 - Zod
 - dotenv
 - CORS
@@ -97,6 +103,8 @@ Duelaris-AI-Arena/
 │       ├── app.ts
 │       ├── config/
 │       │   └── config.ts
+│       ├── middleware/
+│       │   └── rateLimit.middleware.ts
 │       └── services/
 │           ├── models.service.ts
 │           └── graph.ai.service.ts
@@ -143,15 +151,12 @@ PORT=3000
 GEMINI_API_KEY=your_gemini_api_key
 COHERE_API_KEY=your_cohere_api_key
 GROQ_API_KEY=your_groq_api_key
+FRONTEND_URL=http://localhost:5173
 ```
 
-You can start with the example file:
+Replace the placeholders with your actual API keys. Do not commit the `.env` file or expose API keys in frontend code.
 
-```bash
-cp .env.example .env
-```
-
-Replace each placeholder with your real API key. Do not commit the `.env` file or expose API keys in frontend code.
+**Environment variable note:** The backend CORS configuration reads `FRONTEND_URL`. If `.env.example` still uses `FRONTEND_URI`, rename that variable to `FRONTEND_URL` so it matches the code.
 
 Start the backend:
 
@@ -173,7 +178,7 @@ npm run dev
 
 Vite serves the frontend at `http://localhost:5173` by default.
 
-The frontend currently sends requests to `http://localhost:3000/invoke`, so keep the backend on port `3000` unless you also update `BACKEND_URL` in `frontend/src/app/App.jsx`.
+The frontend reads the backend base URL from `VITE_BACKEND_URL`. For local development, the code defaults to `http://localhost:3000` if the variable is not set. For a deployed frontend, configure `VITE_BACKEND_URL` in the hosting provider's environment variables and use your backend's base URL. Do not append `/invoke`; the frontend adds that route itself.
 
 ## API
 
@@ -228,18 +233,31 @@ Successful response shape:
 }
 ```
 
-The values above illustrate the response structure; the actual model output and scores vary by prompt. In the current implementation, scores are constrained from 0 to 10 by the judge's Zod schema.
+The values above illustrate the response structure; actual model output and scores vary by prompt. The judge's Zod schema constrains both scores to a range from 0 to 10.
+
+## Rate Limiting
+
+The backend uses `express-rate-limit` to limit requests to the AI workflow endpoint.
+
+- **Endpoint:** `POST /invoke`
+- **Limit:** 3 requests per client IP
+- **Time window:** 1 minute
+- **Limit response:** `Too many requests, please try again later.`
+
+The limiter is defined in `backend/src/middleware/rateLimit.middleware.ts` and applied to the `/invoke` route in `backend/src/app.ts`. Once the limit is reached, further requests are rejected until the time window resets.
+
+The frontend handles HTTP `429 Too Many Requests` responses by showing a cooldown message, a countdown timer, and a disabled Battle button. The UI uses the server's `Retry-After` header when available and otherwise falls back to a 60-second countdown.
 
 ## Main Packages
 
-These are the main packages used by the project. Running `npm install` in each app installs the dependencies listed in its own `package.json`.
+Running `npm install` in each app installs the dependencies listed in that app's `package.json`.
 
 ### Frontend
 
 | Package | Purpose in this project |
 | --- | --- |
 | `react` / `react-dom` | Build and render the interactive UI |
-| `vite` | Run the frontend dev server and build the app |
+| `vite` | Run the frontend development server and build the app |
 | `tailwindcss` / `@tailwindcss/vite` | Utility-first styling and Tailwind integration with Vite |
 | `axios` | Send the prompt to the backend `/invoke` endpoint |
 | `react-markdown` | Render model responses and judge reasoning as Markdown |
@@ -255,17 +273,18 @@ These are the main packages used by the project. Running `npm install` in each a
 | `@langchain/groq` | Call the Groq model that generates one solution |
 | `@langchain/cohere` | Call the Cohere model that generates the other solution |
 | `@langchain/google-genai` | Connect the Gemini model used to judge the answers |
+| `express-rate-limit` | Restrict `/invoke` to 3 requests per minute per client IP |
 | `zod` | Define graph state and validate the judge's structured response |
 | `dotenv` | Load backend environment variables |
-| `cors` | Allow the local Vite frontend to call the backend |
+| `cors` | Allow the frontend origin to call the backend |
 
 ## Workflow Details
 
-### 1. Generate two solutions
+### 1. Generate Two Solutions
 
-The LangGraph solution node sends the same problem to Groq and Cohere concurrently. The responses are saved in the graph state as `solution_1` and `solution_2`.
+The LangGraph solution node sends the same problem to Groq and Cohere concurrently. Their responses are saved in the graph state as `solution_1` and `solution_2`.
 
-### 2. Judge both solutions
+### 2. Judge Both Solutions
 
 The judge node sends the original problem and both responses to a Gemini-powered agent. It requests four structured fields:
 
@@ -276,9 +295,9 @@ The judge node sends the original problem and both responses to a Gemini-powered
 
 Zod validates that both scores are numbers between 0 and 10.
 
-### 3. Display the result
+### 3. Display the Result
 
-The frontend shows the two model responses side by side, their scores and the judge's reasoning. It then displays an overall verdict: the higher-scoring model wins, or a tie is shown when the scores are equal.
+The frontend shows the two model responses side by side, their scores, and the judge's reasoning. It then displays an overall verdict: the higher-scoring model wins, or a tie is shown when the scores are equal.
 
 ## Frontend Experience
 
@@ -291,23 +310,15 @@ The frontend shows the two model responses side by side, their scores and the ju
 - Judge verdict and comparison visualizations
 - Error message display when the request fails
 - Automatic scroll to the results section after a battle
+- Rate-limit status, cooldown timer, and temporary button disabling
 
 ## Notes
 
 - API keys are used by the backend only.
 - Both answer models run in parallel, but the judge runs after both answers are available.
 - AI-generated scores and reasoning are model judgments, not guarantees of correctness.
-- The frontend backend URL is currently configured directly in `frontend/src/app/App.jsx`.
-- The backend CORS configuration currently allows `http://localhost:5173`.
+- The frontend API base URL is configurable through `VITE_BACKEND_URL`.
+- Set `FRONTEND_URL` on the backend to the frontend's allowed origin.
+- The current rate limiter uses the default `express-rate-limit` store. For a horizontally scaled production deployment, configure a shared store if rate-limit counts need to be consistent across multiple instances.
 
-## Future Improvements
 
-- Add request-body validation and clear error responses for missing prompts.
-- Move the frontend API URL into a Vite environment variable.
-- Add robust handling for model rate limits, timeouts, and provider failures.
-- Let users inspect model names and choose models from the UI.
-- Add history for previous battles.
-
-## License
-
-No license is currently specified in this repository. Add a license file if you want to define how others may use, modify, and distribute this project.
