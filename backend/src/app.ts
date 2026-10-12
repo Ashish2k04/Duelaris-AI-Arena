@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from 'express';
 import useGraph from './services/graph.ai.service.js';
+import { sendingRequestLimiter } from "./middleware/rateLimit.middleware.js";
 import cors from "cors";
 
 const app = express();
@@ -14,7 +15,7 @@ app.get('/', (req,res)=>{
     res.status(200).json({status: "ok"})
 })
 
-app.post("/invoke", async (req,res)=>{
+app.post("/invoke", sendingRequestLimiter, async (req,res)=>{
     const {input} = req.body;
     const result = await useGraph(input)
 
