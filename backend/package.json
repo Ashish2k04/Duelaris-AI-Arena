@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch server.ts",
-     "start": "tsx server.ts"
+    "start": "tsx server.ts"
   },
   "keywords": [],
   "author": "",
@@ -25,8 +25,9 @@
     "cors": "^2.8.6",
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.1",
     "langchain": "^1.5.15",
-    "zod": "^4.6.5",
-     "tsx": "^4.23.15"
+    "tsx": "^4.23.15",
+    "zod": "^4.6.5"
   }
 }
