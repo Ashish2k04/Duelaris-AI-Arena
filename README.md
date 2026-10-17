@@ -1,6 +1,6 @@
 # Duelaris AI Arena
 
-🚀 (Live Demo)[https://duelaris-ai-arena.vercel.app]
+🚀 [Live Demo](https://duelaris-ai-arena.vercel.app)
 
 Duelaris AI Arena is a full-stack AI comparison app where two AI models independently answer the same prompt and a third AI model judges both answers, scores them, explains its evaluation, and identifies the winner.
 
